@@ -10,6 +10,7 @@ import (
 	"github.com/igor-marchi/go-gateway/internal/service"
 	"github.com/igor-marchi/go-gateway/internal/web/server"
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -36,7 +37,7 @@ func main() {
 	accountRepository := repository.NewAccountRepository(db)
 	accountService := service.NewAccountService(accountRepository)
 
-	port := getEnv("PORT", "8080")
+	port := getEnv("HTTP_PORT", "8080")
 	srv := server.NewServer(accountService, port)
 	srv.ConfigureRoutes()
 	if err := srv.Start(); err != nil {
@@ -45,7 +46,7 @@ func main() {
 }
 
 func getEnv(key, fallback string) string {
-	if value := os.Getenv(key); value == "" {
+	if value := os.Getenv(key); value != "" {
 		return value
 	}
 	return fallback
